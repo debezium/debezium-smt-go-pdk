@@ -1,12 +1,13 @@
 package debezium
+
 // Debezium PDK POC
 // TODO: test me properly
 
 // low level primitives to be used:
 
 import (
-	"unsafe"
 	"strconv"
+	"unsafe"
 )
 
 // alloc/free implementation from:
@@ -108,7 +109,7 @@ func envSetBool(valuePtr uint32) uint32
 func SetBool(value bool) uint32 {
 	var valuePtr = libc_malloc(1)
 
-	if (value) {
+	if value {
 		*(*byte)(unsafe.Pointer(uintptr(valuePtr))) = 1
 	} else {
 		*(*byte)(unsafe.Pointer(uintptr(valuePtr))) = 0
