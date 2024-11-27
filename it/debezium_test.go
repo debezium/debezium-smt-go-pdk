@@ -7,7 +7,7 @@ import (
 	_ "embed"
 	"log"
 
-	"github.com/orsinium-labs/tinytest/is"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/tetratelabs/wazero"
 )
@@ -75,8 +75,6 @@ func wazeroStub(ctx context.Context) wazero.Runtime {
 var test1Wasm []byte
 
 func TestNull(t *testing.T) {
-	c := is.NewRelaxed(t)
-
 	var ctx = context.Background()
 	var r = wazeroStub(ctx)
 	defer r.Close(ctx)
@@ -84,15 +82,13 @@ func TestNull(t *testing.T) {
 	mod, _ := r.Instantiate(ctx, test1Wasm)
 	res, _ := mod.ExportedFunction("process").Call(ctx, 0)
 
-	is.Equal(c, res[0], 7)
+	assert.Equal(t, res[0], uint64(7))
 }
 
 //go:embed testdata/test2.wasm
 var test2Wasm []byte
 
 func TestString(t *testing.T) {
-	c := is.NewRelaxed(t)
-
 	var ctx = context.Background()
 	var r = wazeroStub(ctx)
 	defer r.Close(ctx)
@@ -100,8 +96,8 @@ func TestString(t *testing.T) {
 	mod, _ := r.Instantiate(ctx, test2Wasm)
 	res, _ := mod.ExportedFunction("process").Call(ctx, 0)
 
-	is.Equal(c, res[0], 6)
+	assert.Equal(t, res[0], uint64(6))
 
 	buf, _ := mod.Memory().Read(set_string_ptr, 3)
-	is.Equal(c, "foo", string(buf))
+	assert.Equal(t, "foo", string(buf))
 }
