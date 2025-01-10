@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"unsafe"
 
-	"github.com/andreaTP/debezium-smt-go-pdk/internal"
+	"github.com/debezium/debezium-smt-go-pdk/internal"
 )
 
 // access a nested field in the record data structure provided by Debezium

@@ -8,13 +8,13 @@ This library can be used to write
 Include the library with Go get:
 
 ```bash
-go get github.com/andreaTP/debezium-smt-go-pdk
+go get github.com/debezium/debezium-smt-go-pdk
 ```
 
 ## Reference Documentation
 
 You can find the reference documentation for this library on
-[pkg.go.dev](https://pkg.go.dev/github.com/andreaTP/debezium-smt-go-pdk).
+[pkg.go.dev](https://pkg.go.dev/github.com/debezium/debezium-smt-go-pdk).
 
 ## Getting Started
 
@@ -24,7 +24,7 @@ A simple Debezium SMT written in Go should include a `process` function exported
 package main
 
 import (
-	"github.com/andreaTP/debezium-smt-go-pdk"
+	"github.com/debezium/debezium-smt-go-pdk"
 )
 
 //export process
