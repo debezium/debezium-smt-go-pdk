@@ -49,7 +49,7 @@ For efficiency reasons the full content of the record is not transferred to the 
 debezium.GetString(debezium.Get(proxyPtr, "value.op"))
 ```
 
-where `debezium.Get` is used to access the required field with a familiar dot(`.`) syntax, and `debezium.GetString` (or `debezium.IsNull`, `debezium.GetInt`) materialize the value.
+where `debezium.Get` is used to access the required field with a familiar dot(`.`) syntax, and `debezium.GetString` (or `debezium.IsNull`, `debezium.GetInt32`, etc.) materialize the value.
 
 Similarly, returning a value to Debezium is performed using the PDK functionalities:
 
@@ -57,4 +57,4 @@ Similarly, returning a value to Debezium is performed using the PDK functionalit
 return debezium.SetString("foobar")
 ```
 
-the value returned by the `Set` function (or `SetNull`, `SetBool`, `SetInt` ...) should be returned as the result of the `process` function.
+the value returned by the `Set` function (or `SetNull`, `SetBool`, `SetString` ...) should be returned as the result of the `process` function.
