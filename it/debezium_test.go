@@ -6,7 +6,6 @@ import (
 	"context"
 	_ "embed"
 	"log"
-	"strconv"
 
 	"github.com/stretchr/testify/assert"
 
@@ -15,7 +14,6 @@ import (
 
 var get_string_ptr uint32
 var set_string_ptr uint32
-var set_int uint32
 
 // wazero module builder
 func wazeroStub(ctx context.Context) wazero.Runtime {
@@ -32,37 +30,66 @@ func wazeroStub(ctx context.Context) wazero.Runtime {
 		WithFunc(func(v uint32) uint32 {
 			return 2
 		}).
-		Export("get_int").
+		Export("get_bool").
 		NewFunctionBuilder().
-		WithFunc(func(v1, v2 uint32) uint32 {
+		WithFunc(func(v uint32) uint32 {
 			return 3
 		}).
-		Export("get").
+		Export("get_bytes").
 		NewFunctionBuilder().
 		WithFunc(func(v uint32) uint32 {
 			return 4
 		}).
+		Export("get_float32").
+		NewFunctionBuilder().
+		WithFunc(func(v uint32) uint64 {
+			return 5
+		}).
+		Export("get_float64").
+		NewFunctionBuilder().
+		WithFunc(func(v uint32) uint32 {
+			return 6
+		}).
+		Export("get_int16").
+		NewFunctionBuilder().
+		WithFunc(func(v uint32) uint32 {
+			return 7
+		}).
+		Export("get_int32").
+		NewFunctionBuilder().
+		WithFunc(func(v1 uint32) uint32 {
+			return 8
+		}).
+		Export("get_int64").
+		NewFunctionBuilder().
+		WithFunc(func(v uint32) int64 {
+			return 9
+		}).
+		Export("get_int8").
+		NewFunctionBuilder().
+		WithFunc(func(v1, v2 uint32) uint32 {
+			return 10
+		}).
+		Export("get").
+		NewFunctionBuilder().
+		WithFunc(func(v uint32) uint32 {
+			return 11
+		}).
 		Export("set_bool").
 		NewFunctionBuilder().
 		WithFunc(func(v uint32) uint32 {
-			set_int = v
-			return 5
-		}).
-		Export("set_int").
-		NewFunctionBuilder().
-		WithFunc(func(v uint32) uint32 {
 			set_string_ptr = v
-			return 6
+			return 12
 		}).
 		Export("set_string").
 		NewFunctionBuilder().
 		WithFunc(func() uint32 {
-			return 7
+			return 13
 		}).
 		Export("set_null").
 		NewFunctionBuilder().
 		WithFunc(func(v uint32) uint32 {
-			return 8
+			return 14
 		}).
 		Export("is_null").
 		Instantiate(ctx)
@@ -82,10 +109,16 @@ func TestGuestNull(t *testing.T) {
 	var r = wazeroStub(ctx)
 	defer r.Close(ctx)
 
-	mod, _ := r.Instantiate(ctx, test1Wasm)
-	res, _ := mod.ExportedFunction("process").Call(ctx, 0)
+	mod, err := r.Instantiate(ctx, test1Wasm)
+	if err != nil {
+		log.Panicln(err)
+	}
+	res, err := mod.ExportedFunction("process").Call(ctx, 0)
+	if err != nil {
+		log.Panicln(err)
+	}
 
-	assert.Equal(t, res[0], uint64(7))
+	assert.Equal(t, uint64(13), res[0])
 }
 
 //go:embed testdata/test2.wasm
@@ -99,7 +132,7 @@ func TestGuestString(t *testing.T) {
 	mod, _ := r.Instantiate(ctx, test2Wasm)
 	res, _ := mod.ExportedFunction("process").Call(ctx, 0)
 
-	assert.Equal(t, res[0], uint64(6))
+	assert.Equal(t, uint64(12), res[0])
 
 	buf, _ := mod.Memory().Read(set_string_ptr, 3)
 	assert.Equal(t, "foo", string(buf))
@@ -122,28 +155,8 @@ func TestHostString(t *testing.T) {
 
 	res, _ := mod.ExportedFunction("process").Call(ctx, namePtr)
 
-	assert.Equal(t, res[0], uint64(6))
+	assert.Equal(t, uint64(12), res[0])
 
 	buf, _ := mod.Memory().Read(set_string_ptr, 3)
 	assert.Equal(t, "baz", string(buf))
-}
-
-//go:embed testdata/test4.wasm
-var test4Wasm []byte
-
-func TestGuestNumbers(t *testing.T) {
-	var ctx = context.Background()
-	var r = wazeroStub(ctx)
-	defer r.Close(ctx)
-
-	mod, _ := r.Instantiate(ctx, test4Wasm)
-
-	res, _ := mod.ExportedFunction("process").Call(ctx, 123)
-
-	assert.Equal(t, res[0], uint64(5))
-
-	buf, _ := mod.Memory().Read(set_int, 3)
-	myInt, _ := strconv.Atoi(string(buf))
-
-	assert.Equal(t, myInt, 123)
 }
