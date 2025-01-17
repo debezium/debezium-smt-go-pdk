@@ -92,6 +92,16 @@ func wazeroStub(ctx context.Context) wazero.Runtime {
 			return 14
 		}).
 		Export("is_null").
+		NewFunctionBuilder().
+		WithFunc(func(v1, v2 uint32) uint32 {
+			return 15
+		}).
+		Export("get_array_elem").
+		NewFunctionBuilder().
+		WithFunc(func(v uint32) uint32 {
+			return 16
+		}).
+		Export("get_array_size").
 		Instantiate(ctx)
 
 	if err != nil {

@@ -15,6 +15,16 @@ func Get(proxyPtr uint32, fieldName string) uint32 {
 	return envGet(proxyPtr, uint32(uintptr(fieldNamePtr)))
 }
 
+// access the elemnt at index of the array
+func GetArrayElem(proxyPtr uint32, elementIdx uint32) uint32 {
+	return envGetArrayElem(proxyPtr, uint32(elementIdx))
+}
+
+// returns the dimension of the array
+func GetArraySize(proxyPtr uint32) uint32 {
+	return envGetArraySize(proxyPtr)
+}
+
 // materialize the String content referenced
 func GetString(proxyPtr uint32) string {
 	var resultPtr = envGetString(proxyPtr)
@@ -120,6 +130,14 @@ func envSetBool(valuePtr uint32) uint32
 //go:wasm-module env
 //export get
 func envGet(proxyPtr, fieldNamePtr uint32) uint32
+
+//go:wasm-module env
+//export get_array_elem
+func envGetArrayElem(proxyPtr, elemIdx uint32) uint32
+
+//go:wasm-module env
+//export get_array_size
+func envGetArraySize(proxyPtr uint32) uint32
 
 //go:wasm-module env
 //export get_bool
