@@ -33,6 +33,22 @@ func GetString(proxyPtr uint32) string {
 	return result
 }
 
+// materialize the Schema Name
+func GetSchemaName(proxyPtr uint32) string {
+	var resultPtr = envGetSchemaName(proxyPtr)
+	var result = internal.ReadCString(resultPtr)
+	internal.Free(unsafe.Pointer(uintptr(resultPtr)))
+	return result
+}
+
+// materialize the Schema Type
+func GetSchemaType(proxyPtr uint32) string {
+	var resultPtr = envGetSchemaType(proxyPtr)
+	var result = internal.ReadCString(resultPtr)
+	internal.Free(unsafe.Pointer(uintptr(resultPtr)))
+	return result
+}
+
 // materialize the Boolean content referenced
 func GetBool(proxyPtr uint32) bool {
 	return envGetBool(proxyPtr) > 0
@@ -110,6 +126,14 @@ func SetString(value string) uint32 {
 //go:wasm-module env
 //export get_string
 func envGetString(proxyPtr uint32) uint32
+
+//go:wasm-module env
+//export get_schema_name
+func envGetSchemaName(proxyPtr uint32) uint32
+
+//go:wasm-module env
+//export get_schema_type
+func envGetSchemaType(proxyPtr uint32) uint32
 
 //go:wasm-module env
 //export set_null
